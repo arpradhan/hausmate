@@ -7,9 +7,9 @@ from django.views.generic import (
 )
 from django.views.generic.base import TemplateView
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 
-from .models import House
+from .models import House, Roommate
 from .mixins import CreatorCheckMixin
 
 
@@ -56,3 +56,26 @@ class HouseUpdateView(CreatorCheckMixin, UpdateView):
     def get_success_url(self):
         obj = self.get_object()
         return reverse_lazy('house_detail', args=(obj.id,))
+
+
+class RoommateCreateView(UserPassesTestMixin, CreateView):
+    model = Roommate
+    fields = ['name', 'house']
+
+    def post(self, request, *args, **kwargs):
+        post = request.POST.copy()
+        post['house'] = self.get_house().id
+        request.POST = post
+        return super(RoommateCreateView, self).post(request, *args, **kwargs)
+
+    def get_house(self):
+        house_id = self.kwargs.get('house_id')
+        return House.objects.get(id=house_id)
+
+    def get_success_url(self):
+        house = self.get_house()
+        return reverse_lazy('house_detail', args=(house.id,))
+
+    def test_func(self):
+        house = self.get_house()
+        return self.request.user.id == house.creator.id

@@ -6,7 +6,7 @@ from django.http.response import HttpResponseRedirect, HttpResponse
 
 from core import factories
 
-from houses.models import House
+from houses.models import House, Roommate
 
 fake = Faker()
 
@@ -207,3 +207,35 @@ class UserUpdatesHouse(TestCase):
     def test_house_is_updated(self):
         house = House.objects.get(id=self.house.id)
         self.assertEqual(house.name, self.new_name)
+
+
+class UserCreatesRoomate(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = factories.create_fake_user()
+        cls.house = House.objects.create(
+            name=fake.address(),
+            creator=cls.user
+        )
+
+    def setUp(self):
+        data = {'name': fake.first_name()}
+        self.client.force_login(self.user)
+        self.response = self.client.post(
+            reverse('roommate_create', args=(self.house.id,)),
+            data=data,
+        )
+
+    def test_user_can_create_roommate(self):
+        self.assertEqual(self.response.status_code, HttpResponseRedirect.status_code)
+
+    def test_roommate_is_created(self):
+        self.assertEqual(Roommate.objects.count(), 1)
+
+    def test_roommate_is_added_to_house(self):
+        self.assertEqual(self.house.roommate_set.count(), 1)
+        roommate = Roommate.objects.first()
+        self.assertIn(
+            roommate.id,
+            self.house.roommate_set.values_list('id', flat=True)
+        )

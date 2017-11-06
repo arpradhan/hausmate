@@ -8,4 +8,5 @@ urlpatterns = [
     url(r'^(?P<pk>[0-9]+)/$', views.HouseDetailView.as_view(), name='house_detail'),
     url(r'^(?P<pk>[0-9]+)/delete', views.HouseDeleteView.as_view(), name='house_delete'),
     url(r'^(?P<pk>[0-9]+)/update', views.HouseUpdateView.as_view(), name='house_update'),
+    url(r'^(?P<house_id>[0-9]+)/roommates/create', views.RoommateCreateView.as_view(), name='roommate_create'),
 ]
