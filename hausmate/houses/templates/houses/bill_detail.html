@@ -1,10 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>Bill</h2>
-<p>total: {{ object.amount }}</p>
+<p>total: &dollar;{{ object.amount }}</p>
+<p>due: &dollar;{{ object.amount_due }}</p>
+<p>paid: &dollar;{{ object.amount_paid }}</p>
 <ul>
   {% for payment in bill.payment_set.all  %}
-    <li>{{payment.payer.name}} owes {{payment.amount_due}} of {{payment.amount}}.</li>
+    <li>
+      {{payment.payer.name}} owes &dollar;{{payment.amount_due}} of &dollar;{{payment.amount}}.
+      <a href="{% url 'payment_event_create' payment.id %}">Make Payment</a>
+    </li>
   {% endfor %}
 </ul>
 {% endblock %}

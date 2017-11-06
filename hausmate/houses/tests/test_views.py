@@ -6,7 +6,7 @@ from django.http.response import HttpResponseRedirect, HttpResponse
 
 from core import factories
 
-from houses.models import House, Roommate, Bill, Payment
+from houses.models import House, Roommate, Bill, Payment, PaymentEvent
 
 fake = Faker()
 
@@ -307,3 +307,50 @@ class UserViewsBill(HouseDataMixin, TestCase):
     def test_payments_are_listed(self):
         context_data = self.response.context_data
         self.assertEqual(len(context_data['payments']), 3)
+
+
+class BillDataMixin(HouseDataMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        for i in range(4):
+            Roommate.objects.create(
+                name=fake.first_name(),
+                house=cls.house,
+            )
+        cls.bill = Bill.objects.create(
+            amount=64.00,
+            owner=Roommate.objects.first(),
+            house=cls.house)
+        cls.bill.create_split_payments()
+        cls.payment = Payment.objects.first()
+
+
+class UserVisitsPaymentEventCreate(BillDataMixin, TestCase):
+    def setUp(self):
+        self.client.force_login(self.user)
+        self.response = self.client.get(
+            reverse('payment_event_create', args=(self.payment.id,)),
+        )
+
+    def test_user_can_view(self):
+        self.assertEqual(self.response.status_code, HttpResponse.status_code)
+
+
+class UserCreatesPaymentEvent(BillDataMixin, TestCase):
+    def setUp(self):
+        self.client.force_login(self.user)
+        data = {'amount': 8.00}
+        self.response = self.client.post(
+            reverse('payment_event_create', args=(self.payment.id,)),
+            data=data,
+        )
+
+    def test_payment_event_is_created(self):
+        self.assertEqual(PaymentEvent.objects.count(), 1)
+        payment_event = PaymentEvent.objects.first()
+        self.assertEqual(payment_event.amount, 8.00)
+
+    def test_payment_amount_paid_is_increased(self):
+        payment = Payment.objects.get(id=self.payment.id)
+        self.assertEqual(payment.amount_paid, 8.00)

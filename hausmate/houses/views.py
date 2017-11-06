@@ -9,7 +9,7 @@ from django.views.generic.base import TemplateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .models import House, Roommate, Bill, Payment
+from .models import House, Roommate, Bill, Payment, PaymentEvent
 from .mixins import CreatorCheckMixin, HouseChildrenMixin
 
 
@@ -95,15 +95,7 @@ class BillCreateView(HouseChildrenMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
-        house = self.get_house()
-        roommate_count = house.roommate_set.count()
-        split_amount = self.object.amount / roommate_count
-        for roommate in house.roommate_set.all():
-            Payment.objects.create(
-                bill=self.object,
-                payer=roommate,
-                amount=split_amount,
-            )
+        self.object.create_split_payments()
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -132,4 +124,28 @@ class BillDetailView(HouseChildrenMixin, DetailView):
         context_data = super(BillDetailView, self).get_context_data(**kwargs)
         payments = self.get_object().payment_set.all()
         context_data['payments'] = payments
+        return context_data
+
+
+class PaymentEventCreateView(CreateView):
+    model = PaymentEvent
+    fields = ['amount', 'payment']
+
+    def post(self, request, *args, **kwargs):
+        post = request.POST.copy()
+        post['payment'] = self.get_payment().id
+        request.POST = post
+        return super().post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        bill = self.get_payment().bill
+        return reverse_lazy('bill_detail', args=(bill.house.id, bill.id,))
+
+    def get_payment(self):
+        payment_id = self.kwargs.get('payment_id')
+        return Payment.objects.get(id=payment_id)
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        context_data['payment_id'] = self.get_payment().id
         return context_data
