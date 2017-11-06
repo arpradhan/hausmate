@@ -215,6 +215,25 @@ class UserUpdatesHouse(TestCase):
         self.assertEqual(house.name, self.new_name)
 
 
+class UserVisitsCreateRoommate(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = factories.create_fake_user()
+        cls.house = House.objects.create(
+            name=fake.address(),
+            creator=cls.user
+        )
+
+    def setUp(self):
+        self.client.force_login(self.user)
+        self.response = self.client.get(
+            reverse('roommate_create', args=(self.house.id,)),
+        )
+
+    def test_user_can_view(self):
+        self.assertEqual(self.response.status_code, HttpResponse.status_code)
+
+
 class UserCreatesRoomate(TestCase):
     @classmethod
     def setUpTestData(cls):

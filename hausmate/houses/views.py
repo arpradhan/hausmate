@@ -7,10 +7,10 @@ from django.views.generic import (
 )
 from django.views.generic.base import TemplateView
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .models import House, Roommate
-from .mixins import CreatorCheckMixin
+from .models import House, Roommate, Bill
+from .mixins import CreatorCheckMixin, HouseChildrenMixin
 
 
 class HomePageView(TemplateView):
@@ -36,7 +36,7 @@ class HouseCreateView(LoginRequiredMixin, CreateView):
         post = request.POST.copy()
         post['creator'] = request.user.id
         request.POST = post
-        return super(HouseCreateView, self).post(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         self.object = form.save()
@@ -66,24 +66,28 @@ class HouseUpdateView(CreatorCheckMixin, UpdateView):
         return reverse_lazy('house_detail', args=(obj.id,))
 
 
-class RoommateCreateView(UserPassesTestMixin, CreateView):
+class RoommateCreateView(HouseChildrenMixin, CreateView):
     model = Roommate
     fields = ['name', 'house']
+    template_name_suffix = '_create_form'
 
     def post(self, request, *args, **kwargs):
         post = request.POST.copy()
         post['house'] = self.get_house().id
         request.POST = post
-        return super(RoommateCreateView, self).post(request, *args, **kwargs)
-
-    def get_house(self):
-        house_id = self.kwargs.get('house_id')
-        return House.objects.get(id=house_id)
+        return super().post(request, *args, **kwargs)
 
     def get_success_url(self):
         house = self.get_house()
         return reverse_lazy('house_detail', args=(house.id,))
 
-    def test_func(self):
-        house = self.get_house()
-        return self.request.user.id == house.creator.id
+
+class BillCreateView(HouseChildrenMixin, CreateView):
+    model = Bill
+    fields = ['name', 'amount', 'house']
+
+    def post(self, request, *args, **kwargs):
+        post = request.POST.copy()
+        post['house'] = self.get_house().id
+        request.POST = post
+        return super().post(request, *args, **kwargs)

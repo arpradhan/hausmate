@@ -1,6 +1,17 @@
 {% extends "base.html" %}
 {% block content %}
 <h2>{{ object.name }}</h2>
-<a href="{% url 'house_delete' object.id %}">Delete</a>
-<a href="{% url 'house_update' object.id %}">Update</a>
+<div>
+  <a href="{% url 'house_delete' object.id %}">Delete</a>
+  <a href="{% url 'house_update' object.id %}">Update</a>
+  <a href="{% url 'roommate_create' object.id %}">Create Roommate</a>
+</div>
+<div>
+  <h3>Roommates</h3>
+  <ul>
+    {% for roommate in object.roommate_set.all %}
+    <li>{{ roommate.name }}</li>
+    {% endfor %}
+  </ul>
+</div>
 {% endblock %}
