@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Create Roommate</h2>
-{% if error_message %}
-<p><strong>{{ error_message }}</strong></p>
-{% endif %}
-<form action="{% url 'roommate_create' house_id %}" method="post">
-  {% csrf_token %}
-  {{ form.name.label_tag }}
-  {{ form.name }}
-  <input type="submit" value="Create">
-</form>
+<div class="w-100 pa2">
+  <h2>Create Roommate</h2>
+  {% if error_message %}
+  <p><strong>{{ error_message }}</strong></p>
+  {% endif %}
+  <form action="{% url 'roommate_create' house_id %}" method="post">
+    {% csrf_token %}
+    {{ form.name.label_tag }}
+    {{ form.name }}
+    <input type="submit" value="Create">
+  </form>
+</div>
 {% endblock %}

@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Make Payment</h2>
-{% if error_message %}
-<p><strong>{{ error_message }}</strong></p>
-{% endif %}
-<form action="{% url 'payment_event_create' payment_id %}" method="post">
-  {% csrf_token %}
-  {{ form.amount.label_tag }}
-  {{ form.amount }}
-  <input type="submit" value="Submit">
-</form>
+<div class="w-100 pa2">
+  <h2>Make Payment</h2>
+  {% if error_message %}
+  <p><strong>{{ error_message }}</strong></p>
+  {% endif %}
+  <form action="{% url 'payment_event_create' payment_id %}" method="post">
+    {% csrf_token %}
+    {{ form.amount.label_tag }}
+    {{ form.amount }}
+    <input type="submit" value="Submit">
+  </form>
+</div>
 {% endblock %}

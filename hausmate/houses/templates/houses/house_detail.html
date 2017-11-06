@@ -1,19 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>{{ object.name }}</h2>
-<div>
-  <a href="{% url 'house_delete' object.id %}">Delete House</a>
+<div class="w-100 pa2">
+  <h2>{{ object.name }}</h2>
 </div>
-<div>
-  <a href="{% url 'house_update' object.id %}">Update House</a>
+<div class="w-100 pa2">
+  <a class="ph1" href="{% url 'house_delete' object.id %}">Delete House</a>
+  <a class="ph1" href="{% url 'house_update' object.id %}">Update House</a>
+  <a class="ph1" href="{% url 'roommate_create' object.id %}">Create Roommate</a>
+  <a class="ph1" href="{% url 'bill_create' object.id %}">Create Bill</a>
 </div>
-<div>
-  <a href="{% url 'roommate_create' object.id %}">Create Roomate</a>
-</div>
-<div>
-  <a href="{% url 'bill_create' object.id %}">Create Bill</a>
-</div>
-<div>
+<div class="w-100 pa2">
   <h3>Roommates</h3>
   <ul>
     {% for roommate in object.roommate_set.all %}
@@ -21,7 +17,7 @@
     {% endfor %}
   </ul>
 </div>
-<div>
+<div class="w-100 ph2">
   <h3>Bills</h3>
   <ul>
     {% for bill in object.bill_set.all %}

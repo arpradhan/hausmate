@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
-<p>Are you sure you want to delete {{ obj.name }}?</p>
-<form action="{% url 'house_delete' object.id %}" method="post">
-  {% csrf_token %}
-  <input type="submit" value="Yes">
-</form>
+<div class="w-100 pa2">
+  <p>Are you sure you want to delete {{ obj.name }}?</p>
+  <form action="{% url 'house_delete' object.id %}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Yes">
+  </form>
+</div>
 {% endblock %}
