@@ -38,6 +38,14 @@ class HouseCreateView(LoginRequiredMixin, CreateView):
         request.POST = post
         return super(HouseCreateView, self).post(request, *args, **kwargs)
 
+    def form_valid(self, form):
+        self.object = form.save()
+        Roommate.objects.create(
+            name=self.request.user.first_name,
+            house=self.object
+        )
+        return super().form_valid(form)
+
 
 class HouseDetailView(CreatorCheckMixin, DetailView):
     model = House

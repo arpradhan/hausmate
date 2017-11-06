@@ -55,6 +55,12 @@ class UserCreatesHouse(TestCase):
         self.assertIsNotNone(house.creator)
         self.assertEqual(house.creator.id, self.user.id)
 
+    def test_roommate_is_created(self):
+        house = House.objects.first()
+        roommates = house.roommate_set
+        self.assertEqual(roommates.count(), 1)
+        self.assertIn(self.user.first_name, roommates.values_list('name', flat=True))
+
 
 class UserVisitsHouseList(TestCase):
     @classmethod
