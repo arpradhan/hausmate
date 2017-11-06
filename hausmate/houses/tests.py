@@ -6,7 +6,7 @@ from django.http.response import HttpResponseRedirect, HttpResponse
 
 from core import factories
 
-from houses.models import House, Roommate, Bill
+from houses.models import House, Roommate, Bill, Payment
 
 fake = Faker()
 
@@ -219,6 +219,11 @@ class UserCreatesRoomate(HouseDataMixin, TestCase):
             self.house.roommate_set.values_list('id', flat=True)
         )
 
+    def get_context_data(self):
+        context_data = super().get_context_data()
+        context_data['house_id'] = self.kwargs.get('house_id')
+        return context_data
+
 
 class UserVisitsCreateBill(HouseDataMixin, TestCase):
     @classmethod
@@ -248,9 +253,12 @@ class UserCreatesBill(HouseDataMixin, TestCase):
     def setUpTestData(cls):
         super().setUpTestData()
         cls.roommate = Roommate.objects.create(name=fake.first_name(), house=cls.house)
+        Roommate.objects.create(name=fake.first_name(), house=cls.house)
+        Roommate.objects.create(name=fake.first_name(), house=cls.house)
+        cls.amount = 36.00
 
     def setUp(self):
-        data = {'name': 'Internet', 'amount': 80.00, 'owner': self.roommate.id}
+        data = {'name': 'Heat', 'amount': self.amount, 'owner': self.roommate.id}
         self.client.force_login(self.user)
         self.response = self.client.post(
             reverse('bill_create', args=(self.house.id,)),
@@ -264,3 +272,38 @@ class UserCreatesBill(HouseDataMixin, TestCase):
     def test_bill_belongs_to_roommate(self):
         bill = Bill.objects.first()
         self.assertEqual(bill.owner.id, self.roommate.id)
+
+    def test_payments_are_created(self):
+        self.assertEqual(Payment.objects.count(), 3)
+
+    def test_payments_are_split_equally(self):
+        payments = Payment.objects.all()
+        amount = self.amount / 3
+        for payment in payments:
+            self.assertEqual(payment.amount, amount)
+
+
+class UserViewsBill(HouseDataMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.roommate = Roommate.objects.create(name=fake.first_name(), house=cls.house)
+        Roommate.objects.create(name=fake.first_name(), house=cls.house)
+        Roommate.objects.create(name=fake.first_name(), house=cls.house)
+        cls.amount = 36.00
+
+    def setUp(self):
+        data = {'name': 'Heat', 'amount': self.amount, 'owner': self.roommate.id}
+        self.client.force_login(self.user)
+        self.client.post(
+            reverse('bill_create', args=(self.house.id,)),
+            data=data,
+        )
+        bill = Bill.objects.first()
+        self.response = self.client.get(
+            reverse('bill_detail', args=(self.house.id, bill.id,))
+        )
+
+    def test_payments_are_listed(self):
+        context_data = self.response.context_data
+        self.assertEqual(len(context_data['payments']), 3)

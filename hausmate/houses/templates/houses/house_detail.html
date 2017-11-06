@@ -19,4 +19,12 @@
     {% endfor %}
   </ul>
 </div>
+<div>
+  <h3>Bills</h3>
+  <ul>
+    {% for bill in object.bill_set.all %}
+    <li><a href="{% url 'bill_detail' object.id bill.id %}">{{ bill.name}}</a></li>
+    {% endfor %}
+  </ul>
+</div>
 {% endblock %}

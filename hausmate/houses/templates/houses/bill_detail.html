@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Bill</h2>
+<p>total: {{ object.amount }}</p>
+<ul>
+  {% for payment in bill.payment_set.all  %}
+    <li>{{payment.payer.name}} owes {{payment.amount_due}} of {{payment.amount}}.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

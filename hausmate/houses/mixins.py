@@ -16,9 +16,4 @@ class HouseChildrenMixin(UserPassesTestMixin):
 
     def test_func(self):
         house = self.get_house()
-        return self.request.user.id == house.creator.id
-
-    def get_context_data(self):
-        context_data = super().get_context_data()
-        context_data['house_id'] = self.kwargs.get('house_id')
-        return context_data
+        return self.request.user.is_authenticated and self.request.user.id == house.creator.id
