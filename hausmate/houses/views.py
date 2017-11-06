@@ -84,10 +84,22 @@ class RoommateCreateView(HouseChildrenMixin, CreateView):
 
 class BillCreateView(HouseChildrenMixin, CreateView):
     model = Bill
-    fields = ['name', 'amount', 'house']
+    fields = ['name', 'amount', 'owner', 'house']
+    template_name_suffix = '_create_form'
+
+    def get_context_data(self, **kwargs):
+        house = self.get_house()
+        roommates = house.roommate_set.values('id', 'name')
+        context_data = super().get_context_data()
+        context_data['roommates'] = roommates
+        return context_data
 
     def post(self, request, *args, **kwargs):
         post = request.POST.copy()
         post['house'] = self.get_house().id
         request.POST = post
         return super().post(request, *args, **kwargs)
+
+    def get_success_url(self):
+        house = self.get_house()
+        return reverse_lazy('house_detail', args=(house.id,))

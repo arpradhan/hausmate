@@ -29,6 +29,7 @@ class Bill(models.Model):
     modified = models.DateTimeField(auto_now=True)
     amount = models.DecimalField(max_digits=5, decimal_places=2)
     owner = models.ForeignKey(Roommate, on_delete=models.CASCADE)
+    house = models.ForeignKey(House, on_delete=models.CASCADE, null=True)
 
     def __str__(self):
         return self.name

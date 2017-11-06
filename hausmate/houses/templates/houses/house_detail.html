@@ -2,9 +2,14 @@
 {% block content %}
 <h2>{{ object.name }}</h2>
 <div>
-  <a href="{% url 'house_delete' object.id %}">Delete</a>
-  <a href="{% url 'house_update' object.id %}">Update</a>
-  <a href="{% url 'roommate_create' object.id %}">Create Roommate</a>
+  <a href="{% url 'house_delete' object.id %}">Delete House</a>
+  <a href="{% url 'house_update' object.id %}">Update House</a>
+</div>
+<div>
+  <a href="{% url 'roommate_create' object.id %}">Create Roomate</a>
+</div>
+<div>
+  <a href="{% url 'bill_create' object.id %}">Create Bill</a>
 </div>
 <div>
   <h3>Roommates</h3>

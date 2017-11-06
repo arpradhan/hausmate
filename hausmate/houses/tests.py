@@ -6,7 +6,7 @@ from django.http.response import HttpResponseRedirect, HttpResponse
 
 from core import factories
 
-from houses.models import House, Roommate
+from houses.models import House, Roommate, Bill
 
 fake = Faker()
 
@@ -62,14 +62,20 @@ class UserCreatesHouse(TestCase):
         self.assertIn(self.user.first_name, roommates.values_list('name', flat=True))
 
 
-class UserVisitsHouseList(TestCase):
+class HouseDataMixin:
     @classmethod
     def setUpTestData(cls):
         cls.user = factories.create_fake_user()
-        House.objects.create(
+        cls.house = House.objects.create(
             name=fake.address(),
             creator=cls.user
         )
+
+
+class UserVisitsHouseList(HouseDataMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
         House.objects.create(
             name=fake.address(),
             creator=factories.create_fake_user(),
@@ -86,14 +92,7 @@ class UserVisitsHouseList(TestCase):
         self.assertEqual(self.user.id, creator.id)
 
 
-class AnonUserVisitsHouse(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.house = House.objects.create(
-            name=fake.address(),
-            creator=factories.create_fake_user(),
-        )
-
+class AnonUserVisitsHouse(HouseDataMixin, TestCase):
     def setUp(self):
         self.response = self.client.get(
             reverse('house_detail', args=(self.house.id,))
@@ -103,15 +102,7 @@ class AnonUserVisitsHouse(TestCase):
         self.assertEqual(self.response.status_code, HttpResponseRedirect.status_code)
 
 
-class UserVisitsHouse(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = factories.create_fake_user()
-        cls.house = House.objects.create(
-            creator=cls.user,
-            name=fake.address(),
-        )
-
+class UserVisitsHouse(HouseDataMixin, TestCase):
     def setUp(self):
         self.client.force_login(self.user)
         self.response = self.client.get(
@@ -122,15 +113,7 @@ class UserVisitsHouse(TestCase):
         self.assertEqual(self.response.status_code, HttpResponse.status_code)
 
 
-class AnonUserDeletesHouse(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = factories.create_fake_user()
-        cls.house = House.objects.create(
-            creator=cls.user,
-            name=fake.address(),
-        )
-
+class AnonUserDeletesHouse(HouseDataMixin, TestCase):
     def setUp(self):
         self.response = self.client.post(
             reverse('house_delete', args=(self.house.id,))
@@ -146,14 +129,13 @@ class AnonUserDeletesHouse(TestCase):
         )
 
 
-class TestAnonUserUpdatesHouse(TestCase):
+class TestAnonUserUpdatesHouse(HouseDataMixin, TestCase):
     @classmethod
     def setUpTestData(cls):
+        super().setUpTestData()
         cls.name = fake.address()
-        cls.house = House.objects.create(
-            creator=factories.create_fake_user(),
-            name=cls.name,
-        )
+        cls.house.name = cls.name
+        cls.house.save()
 
     def setUp(self):
         data = {'name': fake.address()}
@@ -162,7 +144,7 @@ class TestAnonUserUpdatesHouse(TestCase):
             data=data,
         )
 
-    def test_house_is_not_edited(self):
+    def test_house_is_not_update(self):
         house = House.objects.get(id=self.house.id)
         self.assertEqual(house.name, self.name)
 
@@ -170,15 +152,7 @@ class TestAnonUserUpdatesHouse(TestCase):
         self.assertEqual(self.response.status_code, HttpResponseRedirect.status_code)
 
 
-class UserVisitsUpdateHouse(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = factories.create_fake_user()
-        cls.house = House.objects.create(
-            name=fake.address(),
-            creator=cls.user,
-        )
-
+class UserVisitsUpdateHouse(HouseDataMixin, TestCase):
     def setUp(self):
         self.client.force_login(self.user)
         self.response = self.client.get(
@@ -189,14 +163,10 @@ class UserVisitsUpdateHouse(TestCase):
         self.assertEqual(self.response.status_code, HttpResponse.status_code)
 
 
-class UserUpdatesHouse(TestCase):
+class UserUpdatesHouse(HouseDataMixin, TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = factories.create_fake_user()
-        cls.house = House.objects.create(
-            name=fake.address(),
-            creator=cls.user,
-        )
+        super().setUpTestData()
         cls.new_name = fake.address()
 
     def setUp(self):
@@ -215,15 +185,7 @@ class UserUpdatesHouse(TestCase):
         self.assertEqual(house.name, self.new_name)
 
 
-class UserVisitsCreateRoommate(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = factories.create_fake_user()
-        cls.house = House.objects.create(
-            name=fake.address(),
-            creator=cls.user
-        )
-
+class UserVisitsCreateRoommate(HouseDataMixin, TestCase):
     def setUp(self):
         self.client.force_login(self.user)
         self.response = self.client.get(
@@ -234,15 +196,7 @@ class UserVisitsCreateRoommate(TestCase):
         self.assertEqual(self.response.status_code, HttpResponse.status_code)
 
 
-class UserCreatesRoomate(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.user = factories.create_fake_user()
-        cls.house = House.objects.create(
-            name=fake.address(),
-            creator=cls.user
-        )
-
+class UserCreatesRoomate(HouseDataMixin, TestCase):
     def setUp(self):
         data = {'name': fake.first_name()}
         self.client.force_login(self.user)
@@ -264,3 +218,49 @@ class UserCreatesRoomate(TestCase):
             roommate.id,
             self.house.roommate_set.values_list('id', flat=True)
         )
+
+
+class UserVisitsCreateBill(HouseDataMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.r1 = Roommate.objects.create(name=fake.first_name(), house=cls.house)
+        cls.r2 = Roommate.objects.create(name=fake.first_name(), house=cls.house)
+
+    def setUp(self):
+        self.client.force_login(self.user)
+        self.response = self.client.get(
+            reverse('bill_create', args=(self.house.id,))
+        )
+
+    def test_user_can_view(self):
+        self.assertEqual(self.response.status_code, HttpResponse.status_code)
+
+    def test_roommates_in_owner_select(self):
+        roommates = self.response.context['roommates']
+        roommate_ids = [r['id'] for r in roommates]
+        self.assertIn(self.r1.id, roommate_ids)
+        self.assertIn(self.r2.id, roommate_ids)
+
+
+class UserCreatesBill(HouseDataMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.roommate = Roommate.objects.create(name=fake.first_name(), house=cls.house)
+
+    def setUp(self):
+        data = {'name': 'Internet', 'amount': 80.00, 'owner': self.roommate.id}
+        self.client.force_login(self.user)
+        self.response = self.client.post(
+            reverse('bill_create', args=(self.house.id,)),
+            data=data,
+        )
+
+    def test_bill_is_created(self):
+        self.assertEqual(self.response.status_code, HttpResponseRedirect.status_code)
+        self.assertEqual(Bill.objects.count(), 1)
+
+    def test_bill_belongs_to_roommate(self):
+        bill = Bill.objects.first()
+        self.assertEqual(bill.owner.id, self.roommate.id)
