@@ -11,18 +11,25 @@
     <a class="f6" href="{% url 'bill_create' object.id %}">Add Bill</a>
     <div class="pv2">
       {% for bill in object.bill_set.all %}
-      <div class="ba pa2 mv2 mw6"><a href="{% url 'bill_detail' object.id bill.id %}">{{ bill.name}}</a></div>
+        <div class="ba b--black pa4 mv2 mw6">
+          <a href="{% url 'bill_detail' object.id bill.id %}">{{ bill.name}}</a>
+          <div class="pv2 flex justify-between">
+            <div class="red mr2 f6">&dollar;{{ bill.amount_due }} Due</div>
+            <div class="green mr2 f6">&dollar;{{ bill.amount_paid }} Paid</div>
+            <div class="mr2 f6">&dollar;{{ bill.amount }} Total</div>
+          </div>
+        </div>
       {% endfor %}
     </div>
   </div>
   <div>
     <div class="b f3 pb2">Roommates</div>
     <a class="f6" href="{% url 'roommate_create' object.id %}">Add Roommate</a>
-    <div class="pv2">
+    <ul class="list pl0">
       {% for roommate in object.roommate_set.all %}
-      <div class="ba pa2 mv2 mw6">{{ roommate.name }}</div>
+        <li >{{ roommate.name }}</li>
       {% endfor %}
-    </div>
+    </ul>
   </div>
 </div>
 {% endblock %}

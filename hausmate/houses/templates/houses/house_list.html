@@ -1,13 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="w-100 pv2 ph5">
-<h2 class="f2 lh-title">Houses</h2>
-<a href="{% url 'house_create' %}" class="db pb4 f6">Create House</a>
-{% for obj in object_list %}
-  <div class="ba pa4">
-    <a href="{% url 'house_detail' obj.id %}" class="f3">{{ obj.name }}</a>
-  </div>
-{% endfor %}
+<div class="pv2 ph5">
+  <div class="b f2 pt4 pb2">Houses</div>
+  <a href="{% url 'house_create' %}" class="db mb4 f6">Create House</a>
+  <ul class="list pl0">
+    {% for obj in object_list %}
+    <li>
+      <a href="{% url 'house_detail' obj.id %}" class="f4">{{ obj.name }}</a>
+    </li>
+    {% endfor %}
+  </ul>
 </div>
 {% endblock %}

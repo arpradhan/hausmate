@@ -1,17 +1,37 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="w-100 pa2">
-  <h2>Bill: {{ object.name }}</h2>
-  <p>total: &dollar;{{ object.amount }}</p>
-  <p>due: &dollar;{{ object.amount_due }}</p>
-  <p>paid: &dollar;{{ object.amount_paid }}</p>
-  <ul>
-    {% for payment in bill.payment_set.all  %}
-      <li>
-        {{payment.payer.name}} owes &dollar;{{payment.amount_due}} of &dollar;{{payment.amount}}.
-        <a href="{% url 'payment_event_create' payment.id %}">Make Payment</a>
-      </li>
-    {% endfor %}
-  </ul>
+<div class="pv2 ph5">
+  <h2>{{ object.name }}</h2>
+  <div class="mw6">
+    <span class="f6 red mr2">&dollar;{{ object.amount_due }} Due</span>
+    <span class="f6 green mr2">&dollar;{{ object.amount_paid }} Paid</span>
+    <span class="f6 mr2">&dollar;{{ object.amount }} Total</span>
+  </div>
+  <table class="collapse ba b--black-10 pv2 ph3 mv3">
+    <tbody>
+      <tr class="striped--light-gray">
+        <th class="pv2 ph3 tl f6 fw6 ttu">Roommate</th>
+        <th class="tc f6 ttu fw6 pv2 ph3">Amount Due</th>
+        <th class="tc f6 ttu fw6 pv2 ph3">Amount Paid</th>
+        <th></th>
+      </tr>
+      {% for payment in bill.payment_set.all  %}
+      <tr class="striped--light-gray">
+        <td class="pv2 ph3">
+          {{payment.payer.name}}
+        </td>
+        <td class="pv2 ph3">
+          {{payment.amount_due}}
+        </td>
+        <td class="pv2 ph3">
+          {{payment.amount_paid}}
+        </td>
+        <td class="pv2 ph3">
+          <a class="f6" href="{% url 'payment_event_create' payment.id %}">Make Payment</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 </div>
 {% endblock %}
