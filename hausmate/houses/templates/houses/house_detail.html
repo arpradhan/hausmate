@@ -1,28 +1,28 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="pv2 ph5">
-  <div>
-    <h2 class="dib f2">{{ object.name }}</h2>
-    <a class="f6 pl2" href="{% url 'house_update' object.id %}">Edit</a>
+  <div class="pb4">
+    <div class="b f2 pt4 pb2">{{ object.name }}</div>
+    <a class="f6" href="{% url 'house_update' object.id %}">Update</a>
     <a class="f6" href="{% url 'house_delete' object.id %}">Delete</a>
   </div>
-  <div>
-    <span class="b f3">Roommates</span>
-    <a class="pl2 f6" href="{% url 'roommate_create' object.id %}">Add Roommate</a>
+  <div class="pb4">
+    <div class="b f3 pb2">Roommates</div>
+    <a class="f6" href="{% url 'roommate_create' object.id %}">Add Roommate</a>
+    <div class="pv2">
+      {% for roommate in object.roommate_set.all %}
+      <div class="ba pa2 mv2 mw6">{{ roommate.name }}</div>
+      {% endfor %}
+    </div>
   </div>
-  <ul>
-    {% for roommate in object.roommate_set.all %}
-    <li>{{ roommate.name }}</li>
-    {% endfor %}
-  </ul>
   <div>
-    <span class="b f3">Bills</span>
-    <a class="pl2 f6" href="{% url 'bill_create' object.id %}">Add Bill</a>
+    <div class="b f3 pb2">Bills</div>
+    <a class="f6" href="{% url 'bill_create' object.id %}">Add Bill</a>
+    <div class="pv2">
+      {% for bill in object.bill_set.all %}
+      <div class="ba p2 mv2 mw6"><a href="{% url 'bill_detail' object.id bill.id %}">{{ bill.name}}</a></div>
+      {% endfor %}
+    </div>
   </div>
-  <ul>
-    {% for bill in object.bill_set.all %}
-    <li><a href="{% url 'bill_detail' object.id bill.id %}">{{ bill.name}}</a></li>
-    {% endfor %}
-  </ul>
 </div>
 {% endblock %}
