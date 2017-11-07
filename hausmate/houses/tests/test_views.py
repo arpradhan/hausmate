@@ -354,3 +354,19 @@ class UserCreatesPaymentEvent(BillDataMixin, TestCase):
     def test_payment_amount_paid_is_increased(self):
         payment = Payment.objects.get(id=self.payment.id)
         self.assertEqual(payment.amount_paid, 8.00)
+
+
+class RoommateDetailViewTests(BillDataMixin, TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.roommate = Roommate.objects.first()
+
+    def setUp(self):
+        self.client.force_login(self.user)
+        self.response = self.client.get(
+            reverse('roommate_detail', args=(self.house.id, self.roommate.id,))
+        )
+
+    def test_response_is_successful(self):
+        self.assertEqual(self.response.status_code, HttpResponse.status_code)

@@ -9,7 +9,7 @@
     <nav class="pv3 ph5 bb flex justify-end">
       {% if user.is_authenticated %}
         <a class="pa2 f6" href="{% url 'house_list' %}">Houses</a>
-        <a class="pa2 f6" href="{% url 'logout' %}">Logout</a>
+        <a class="pa2 f6" href="{% url 'logout' %}">Sign Out</a>
       {% else %}
         <a class="pa2 f6" href="{% url 'login' %}">Sign In</a>
         <a class="pa2 f6" href="{% url 'user_create' %}">Register</a>

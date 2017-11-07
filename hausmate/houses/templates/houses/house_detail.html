@@ -25,9 +25,13 @@
   <div>
     <div class="b f3 pb2">Roommates</div>
     <a class="f6" href="{% url 'roommate_create' object.id %}">Add Roommate</a>
-    <ul class="list pl0">
+    <ul class="list pl0 mw4">
       {% for roommate in object.roommate_set.all %}
-        <li >{{ roommate.name }}</li>
+        <li>
+          <a href="{% url 'roommate_detail' object.id roommate.id %}" class="mv2 db">
+            {{ roommate.name }}
+          </a>
+        </li>
       {% endfor %}
     </ul>
   </div>

@@ -88,3 +88,155 @@ class CreatePaymentEvent(BillDataMixin, TestCase):
             self.payment.amount_paid,
             Decimal(self.payment_amount) - Decimal(self.payment_event_amount),
         )
+
+
+class RoommatePaymentHistory(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = factories.create_fake_user()
+        house = House.objects.create(
+            creator=cls.user,
+            name=fake.address(),
+        )
+        cls.roommate = Roommate.objects.create(name=fake.first_name(), house=house)
+        r2 = Roommate.objects.create(name=fake.first_name(), house=house)
+        r3 = Roommate.objects.create(name=fake.first_name(), house=house)
+        cls.b1 = Bill.objects.create(
+            name='Internet',
+            amount=100.00,
+            owner=r2,
+            house=house,
+        )
+        cls.b2 = Bill.objects.create(
+            name='Heat',
+            amount=50.00,
+            owner=r3,
+            house=house,
+        )
+        cls.p1 = Payment.objects.create(
+            bill=cls.b1,
+            amount=50.00,
+            payer=cls.roommate,
+        )
+        cls.p2 = Payment.objects.create(
+            bill=cls.b2,
+            amount=25.00,
+            payer=cls.roommate,
+        )
+
+    def setUp(self):
+        self.pe1 = PaymentEvent.objects.create(
+            amount=10.00,
+            payment=self.p1,
+        )
+        self.pe2 = PaymentEvent.objects.create(
+            amount=20.00,
+            payment=self.p2,
+        )
+        self.pe3 = PaymentEvent.objects.create(
+            amount=30.00,
+            payment=self.p1,
+        )
+        self.payment_history = self.roommate.payment_history()
+
+    def test_payment_history_ordering(self):
+        history = self.payment_history
+        self.assertEqual(history[0].id, self.pe3.id)
+        self.assertEqual(history[1].id, self.pe2.id)
+        self.assertEqual(history[2].id, self.pe1.id)
+
+
+class AmountsOwedFromRoommates(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = factories.create_fake_user()
+        house = House.objects.create(
+            creator=cls.user,
+            name=fake.address(),
+        )
+        cls.roommate = Roommate.objects.create(name=fake.first_name(), house=house)
+        cls.r2 = Roommate.objects.create(name=fake.first_name(), house=house)
+        r3 = Roommate.objects.create(name=fake.first_name(), house=house)
+        b1 = Bill.objects.create(
+            name='Internet',
+            amount=100.00,
+            owner=cls.roommate,
+            house=house,
+        )
+        b2 = Bill.objects.create(
+            name='Heat',
+            amount=100.00,
+            owner=cls.roommate,
+            house=house,
+        )
+        b3 = Bill.objects.create(
+            name='Electric',
+            amount=100.00,
+            owner=cls.roommate,
+            house=house,
+        )
+        for bill in [b1, b2, b3]:
+            Payment.objects.create(
+                bill=bill,
+                amount=25.00,
+                payer=r3,
+            )
+            Payment.objects.create(
+                bill=bill,
+                amount=50.00,
+                payer=cls.r2,
+            )
+
+    def setUp(self):
+        self.amounts_owed_from_roommates = self.roommate.amounts_owed_from_roommates()
+
+    def test_amounts(self):
+        self.assertEqual(
+            self.amounts_owed_from_roommates[0]['amount'],
+            150.00,
+        )
+
+
+class AmountsOwedToRoommates(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = factories.create_fake_user()
+        house = House.objects.create(
+            creator=cls.user,
+            name=fake.address(),
+        )
+        cls.roommate = Roommate.objects.create(name=fake.first_name(), house=house)
+        r2 = Roommate.objects.create(name=fake.first_name(), house=house)
+        b1 = Bill.objects.create(
+            name='Internet',
+            amount=100.00,
+            owner=r2,
+            house=house,
+        )
+        b2 = Bill.objects.create(
+            name='Heat',
+            amount=100.00,
+            owner=r2,
+            house=house,
+        )
+        b3 = Bill.objects.create(
+            name='Electric',
+            amount=100.00,
+            owner=r2,
+            house=house,
+        )
+        for bill in [b1, b2, b3]:
+            Payment.objects.create(
+                bill=bill,
+                amount=50.00,
+                payer=cls.roommate,
+            )
+
+    def setUp(self):
+        self.amounts_owed_to_roommates = self.roommate.amounts_owed_to_roommates()
+
+    def test_amounts(self):
+        self.assertEqual(
+            self.amounts_owed_to_roommates[0]['amount'],
+            150.00,
+        )

@@ -122,7 +122,7 @@ class BillDetailView(HouseChildrenMixin, DetailView):
     model = Bill
 
     def get_context_data(self, **kwargs):
-        context_data = super(BillDetailView, self).get_context_data(**kwargs)
+        context_data = super().get_context_data(**kwargs)
         payments = self.get_object().payment_set.all()
         context_data['payments'] = payments
         return context_data
@@ -154,4 +154,16 @@ class PaymentEventCreateView(CreateView):
         context_data['payment_id'] = payment.id
         context_data['bill_id'] = bill.id
         context_data['house_id'] = house.id
+        return context_data
+
+
+class RoommateDetailView(DetailView):
+    model = Roommate
+
+    def get_context_data(self, **kwargs):
+        context_data = super().get_context_data(**kwargs)
+        obj = self.get_object()
+        context_data['payment_history'] = obj.payment_history()
+        context_data['amounts_owed_from_roommates'] = obj.amounts_owed_from_roommates()
+        context_data['amounts_owed_to_roommates'] = obj.amounts_owed_to_roommates()
         return context_data

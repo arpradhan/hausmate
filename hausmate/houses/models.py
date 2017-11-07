@@ -24,6 +24,51 @@ class Roommate(models.Model):
     def __str__(self):
         return self.name
 
+    def payment_history(self):
+        payments = self.payment_set
+        payment_events = PaymentEvent.objects.filter(
+            payment__in=payments.values_list('id', flat=True)
+        ).order_by('-created')
+        return payment_events
+
+    def amounts_owed_from_roommates(self):
+        # List of total amounts owed by each roommate to the current roomamte
+        roommates = self.house.roommate_set.exclude(id=self.id)
+        amounts = []
+        for roommate in roommates:
+            data = {}
+            payments = roommate.payment_set.filter(
+                bill__owner_id=self.id,
+            )
+            if payments.count() > 0:
+                amount_paid_sum = payments.aggregate(
+                    models.Sum('amount_paid'))['amount_paid__sum']
+                amount_sum = payments.aggregate(
+                    models.Sum('amount'))['amount__sum']
+                data['amount'] = amount_sum - amount_paid_sum
+                data['roommate_name'] = roommate.name
+                amounts.append(data)
+        return amounts
+
+    def amounts_owed_to_roommates(self):
+        roommates = self.house.roommate_set.exclude(id=self.id)
+        amounts = []
+        for roommate in roommates:
+            data = {}
+            payments = self.payment_set.filter(
+                bill__owner_id=roommate.id
+            )
+            if payments.count() > 0:
+                amount_paid_sum = payments.aggregate(
+                    models.Sum('amount_paid'))['amount_paid__sum']
+                amount_sum = payments.aggregate(
+                    models.Sum('amount'))['amount__sum']
+                data['amount'] = amount_sum - amount_paid_sum
+                data['roommate_name'] = roommate.name
+                if data['amount'] > 0.00:
+                    amounts.append(data)
+        return amounts
+
 
 class Bill(models.Model):
     name = models.CharField(max_length=200)
@@ -84,9 +129,19 @@ class Payment(models.Model):
 class PaymentEvent(models.Model):
     payment = models.ForeignKey(Payment, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=5, decimal_places=2, default=0.00)
+    created = models.DateTimeField(auto_now_add=True, null=True)
+    modified = models.DateTimeField(auto_now=True, null=True)
+
+    def __str__(self):
+        return '{payer} paid {amount} to {payee} for {bill}'.format(
+            payer=self.payment.payer.name,
+            amount=self.amount,
+            payee=self.payment.bill.owner.name,
+            bill=self.payment.bill.name,
+        )
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         payment = self.payment
-        payment.amount_paid += Decimal(self.amount)
+        payment.amount_paid = Decimal(payment.amount_paid) + Decimal(self.amount)
         payment.save()

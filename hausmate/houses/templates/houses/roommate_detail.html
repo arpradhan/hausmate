@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="pv2 ph5">
+  <div class="b f2 pt4 pb2">{{ object.name }}</div>
+  <div class="b f3 pt4 pb3">Payment History</div>
+    {% for event in payment_history %}
+    <div class="pb2">
+      <span class="db">{{ event }}</span>
+      <small class="f8 black-50">{{ event.created }}</small>
+    </div>
+    {% endfor %}
+  <div class="b f3 pt4 pb3">Amounts Owed From Roommates</div>
+  {% if amounts_owed_from_roommates %}
+    {% for amount in amounts_owed_from_roommates %}
+      <div class="pb2">
+        {{ amount.roommate_name }} owes ${{ amount.amount }} to {{ object.name }}.
+      </div>
+    {% endfor %}
+  {% else %}
+    <span class="i black-50">None</span>
+  {% endif %}
+    <div class="b f3 pt4 pb3">Amounts Owed From Roommates</div>
+  {% if amounts_owed_to_roommates %}
+    {% for amount in amounts_owed_to_roommates %}
+      <div class="pb2">
+          ${{ amount.amount }} owed to {{ amount.roommate_name }}.
+      </div>
+    {% endfor %}
+  {% else %}
+    <span class="i black-50">None</span>
+  {% endif %}
+  <a href="{% url 'house_detail' object.house.id %}" class="db mv4">Back to House</a>
+</div>
+{% endblock %}
