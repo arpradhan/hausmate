@@ -2,16 +2,12 @@
 
 {% block content %}
 <div class="w-100 pv2 ph5">
-<h2>Houses</h2>
-<ul>
-  {% for obj in object_list %}
-    <li>
-      <a href="{% url 'house_detail' obj.id %}">{{ obj.name }}</a>
-    </li>
-  {% endfor %}
-</ul>
-</div>
-<div class="w-100 pv2 ph5">
-  <a href="{% url 'house_create' %}">Create House</a>
+<h2 class="f2 lh-title">Houses</h2>
+<a href="{% url 'house_create' %}" class="db pb4 f6">Create House</a>
+{% for obj in object_list %}
+  <div class="ba pa4">
+    <a href="{% url 'house_detail' obj.id %}" class="f3">{{ obj.name }}</a>
+  </div>
+{% endfor %}
 </div>
 {% endblock %}

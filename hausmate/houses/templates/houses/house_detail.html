@@ -1,24 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="w-100 pa2">
-  <h2>{{ object.name }}</h2>
-</div>
-<div class="w-100 pa2">
-  <a class="ph1" href="{% url 'house_delete' object.id %}">Delete House</a>
-  <a class="ph1" href="{% url 'house_update' object.id %}">Update House</a>
-  <a class="ph1" href="{% url 'roommate_create' object.id %}">Create Roommate</a>
-  <a class="ph1" href="{% url 'bill_create' object.id %}">Create Bill</a>
-</div>
-<div class="w-100 pa2">
-  <h3>Roommates</h3>
+<div class="pv ph5">
+  <div>
+    <h2 class="dib f2">{{ object.name }}</h2>
+    <a class="f6 pl2" href="{% url 'house_update' object.id %}">Edit</a>
+    <a class="f6" href="{% url 'house_delete' object.id %}">Delete</a>
+  </div>
+  <div>
+    <span class="b f3">Roommates</span>
+    <a class="pl2 f6" href="{% url 'roommate_create' object.id %}">Add Roommate</a>
+  </div>
   <ul>
     {% for roommate in object.roommate_set.all %}
     <li>{{ roommate.name }}</li>
     {% endfor %}
   </ul>
-</div>
-<div class="w-100 ph2">
-  <h3>Bills</h3>
+  <div>
+    <span class="b f3">Bills</span>
+    <a class="pl2 f6" href="{% url 'bill_create' object.id %}">Add Bill</a>
+  </div>
   <ul>
     {% for bill in object.bill_set.all %}
     <li><a href="{% url 'bill_detail' object.id bill.id %}">{{ bill.name}}</a></li>
