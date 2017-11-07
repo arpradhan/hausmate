@@ -11,11 +11,11 @@
     <a class="f6" href="{% url 'bill_create' object.id %}">Add Bill</a>
     <div class="pv2">
       {% for bill in object.bill_set.all %}
-        <div class="ba b--black pa4 mv2 mw6">
+        <div class="ba b--black-50 pa4 mv2 mw6">
           <a href="{% url 'bill_detail' object.id bill.id %}">{{ bill.name}}</a>
           <div class="pv2 flex justify-between">
-            <div class="red mr2 f6">&dollar;{{ bill.amount_due }} Due</div>
-            <div class="green mr2 f6">&dollar;{{ bill.amount_paid }} Paid</div>
+            <div class="black-50 mr2 f6">&dollar;{{ bill.amount_due }} Due</div>
+            <div class="black-50 mr2 f6">&dollar;{{ bill.amount_paid }} Paid</div>
             <div class="mr2 f6">&dollar;{{ bill.amount }} Total</div>
           </div>
         </div>
