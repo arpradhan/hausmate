@@ -1,15 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="w-100 pa2">
+<div class="pv2 ph5">
   <h2>Make Payment</h2>
   {% if error_message %}
-  <p><strong>{{ error_message }}</strong></p>
+  <p class="red">{{ error_message }</p>
   {% endif %}
-  <form action="{% url 'payment_event_create' payment_id %}" method="post">
+  <form action="{% url 'payment_event_create' payment_id %}" method="post" class="mw6">
     {% csrf_token %}
-    {{ form.amount.label_tag }}
-    {{ form.amount }}
-    <input type="submit" value="Submit">
+    <div class="form-field mb2">
+      {% for error in form.amount.errors %}
+      <p class="red f6">{{ error }}</p>
+      {% endfor %}
+      <label for="{{ form.amount.id_for_label }}" class="f6 b db mb2 black-60">{{ form.amount.label }}</label>
+      <input
+        type="number"
+        step="0.01"
+        required
+        autofocus
+        id="{{ form.amount.id_for_label }}"
+        name="{{ form.amount.name }}"
+        class="ba b--black-20 pa1 b2 db w-100">
+    </div>
+    <input
+      type="submit"
+      value="Submit"
+      class="dim f6 ba bw1 ph3 pv2 mb2 mt2 db black bg-white b--black"
+    >
   </form>
+  <a href="{% url 'bill_detail' bill_id house_id %}" class="pv4 db">Back to Bill</a>
 </div>
 {% endblock %}

@@ -148,5 +148,10 @@ class PaymentEventCreateView(CreateView):
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
-        context_data['payment_id'] = self.get_payment().id
+        payment = self.get_payment()
+        bill = payment.bill
+        house = bill.house
+        context_data['payment_id'] = payment.id
+        context_data['bill_id'] = bill.id
+        context_data['house_id'] = house.id
         return context_data
