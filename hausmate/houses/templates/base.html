@@ -6,13 +6,13 @@
     <link rel="stylesheet" href="https://unpkg.com/tachyons@4.9.0/css/tachyons.min.css"/>
   </head>
   <body class="sans-serif black bg-white">
-    <nav class="w-100 pv3 ph5 bb">
+    <nav class="pv3 ph5 bb flex justify-end">
       {% if user.is_authenticated %}
-        <a class="ph1 f6" href="{% url 'home' %}">Home</a>
-        <a class="ph1 f6" href="{% url 'logout' %}">Logout</a>
+        <a class="pa2 f6" href="{% url 'house_list' %}">Houses</a>
+        <a class="pa2 f6" href="{% url 'logout' %}">Logout</a>
       {% else %}
-        <a class="ph1 f6" href="{% url 'login' %}">Sign In</a>
-        <a class="ph1 f6" href="{% url 'user_create' %}">Register</a>
+        <a class="pa2 f6" href="{% url 'login' %}">Sign In</a>
+        <a class="pa2 f6" href="{% url 'user_create' %}">Register</a>
       {% endif %}
     </nav>
     {% block content %}{% endblock %}

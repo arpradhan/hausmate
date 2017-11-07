@@ -1,10 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="w-100 pa2">
+<div class="pv ph5">
   <p>Are you sure you want to delete {{ obj.name }}?</p>
-  <form action="{% url 'house_delete' object.id %}" method="post">
-    {% csrf_token %}
-    <input type="submit" value="Yes">
-  </form>
+  <div class="flex justify-between mw4">
+    <form action="{% url 'house_delete' object.id %}" method="post">
+      {% csrf_token %}
+      <input
+        type="submit"
+        value="Yes"
+        class="dim f6 ba bw1 ph3 pv2 mb2 mt2 db black bg-white b--black"
+      >
+    </form>
+    <form action="{% url 'house_detail' object.id %}" method="get">
+      <input
+        type="submit"
+        value="No"
+        class="dim f6 ba bw1 ph3 pv2 mb2 mt2 db black bg-white b--black">
+    </form>
+  </div>
 </div>
 {% endblock %}
