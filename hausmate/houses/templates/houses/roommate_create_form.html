@@ -1,15 +1,27 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="w-100 pa2">
+<div class="pv2 ph5">
   <h2>Create Roommate</h2>
-  {% if error_message %}
-  <p><strong>{{ error_message }}</strong></p>
-  {% endif %}
-  <form action="{% url 'roommate_create' house_id %}" method="post">
+  <form action="{% url 'roommate_create' house_id %}" method="post" class="mw5">
     {% csrf_token %}
-    {{ form.name.label_tag }}
-    {{ form.name }}
-    <input type="submit" value="Create">
+    <div class="form-field mb2">
+      {% for error in form.name.errors %}
+      <p class="red f6">{{ error }}</p>
+      {% endfor %}
+      <label for="{{ form.name.id_for_label }}" class="f6 b db mb2 black-60">{{ form.name.label }}</label>
+      <input
+        type="text"
+        required
+        autofocus
+        id="{{ form.name.id_for_label }}"
+        name="{{ form.name.name }}"
+        class="ba b--black-20 pa1 b2 db w-100">
+    </div>
+    <input
+      type="submit"
+      value="Create"
+      class="dim f6 ba bw1 ph3 pv2 mb2 mt2 dib black bg-white b--black"
+    >
   </form>
 </div>
 {% endblock %}

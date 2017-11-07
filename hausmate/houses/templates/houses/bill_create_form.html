@@ -1,24 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Create Bill</h2>
-{% if error_message %}
-<p><strong>{{ error_message }}</strong></p>
-{% endif %}
-<form action="{% url 'bill_create' house_id %}" method="post">
-  {% csrf_token %}
-  <div>
-    {{ form.name.label_tag }}
-    {{ form.name }}
-  </div>
-  <div>
-    {{ form.amount.label_tag }}
-    {{ form.amount }}
-  </div>
-  <select name="owner">
-    {% for roommate in roommates %}
-      <option value="{{ roommate.id }}">{{ roommate.name }}</option>
-    {% endfor %}
-  </select>
-  <input type="submit" value="Create">
-</form>
+<div class="pv2 ph5">
+  <h2>Create Bill</h2>
+  {% if error_message %}
+  <p><strong>{{ error_message }}</strong></p>
+  {% endif %}
+  <form action="{% url 'bill_create' house_id %}" method="post">
+    {% csrf_token %}
+    <div>
+      {{ form.name.label_tag }}
+      {{ form.name }}
+    </div>
+    <div>
+      {{ form.amount.label_tag }}
+      {{ form.amount }}
+    </div>
+    <select name="owner">
+      {% for roommate in roommates %}
+        <option value="{{ roommate.id }}">{{ roommate.name }}</option>
+      {% endfor %}
+    </select>
+    <input type="submit" value="Create">
+  </form>
+</div>
 {% endblock %}
