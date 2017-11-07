@@ -19,6 +19,7 @@ class HomePageView(TemplateView):
 
 class HouseListView(LoginRequiredMixin, ListView):
     model = House
+    login_url = '/login/'
 
     def get_queryset(self):
         return House.objects.filter(
