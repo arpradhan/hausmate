@@ -2,25 +2,44 @@
 {% block content %}
 <div class="pv2 ph5">
   <h2>Create Bill</h2>
-  {% if error_message %}
-  <p><strong>{{ error_message }}</strong></p>
-  {% endif %}
-  <form action="{% url 'bill_create' house_id %}" method="post">
+  <form action="{% url 'bill_create' house_id %}" class="mw5" method="post">
     {% csrf_token %}
-    <div>
-      {{ form.name.label_tag }}
-      {{ form.name }}
+    <div class="form-field mb2">
+      {% for error in form.name.errors %}
+      <p class="red f6">{{ error }}</p>
+      {% endfor %}
+      <label for="{{ form.name.id_for_label }}" class="f6 b db mb2 black-60">{{ form.name.label }}</label>
+      <input
+        type="text"
+        required
+        autofocus
+        id="{{ form.name.id_for_label }}"
+        name="{{ form.name.name }}"
+        class="ba b--black-20 pa1 b2 db w-100">
     </div>
-    <div>
-      {{ form.amount.label_tag }}
-      {{ form.amount }}
+    <div class="form-field mb2">
+      {% for error in form.amount.errors %}
+      <p class="red f6">{{ error }}</p>
+      {% endfor %}
+      <label for="{{ form.amount.id_for_label }}" class="f6 b db mb2 black-60">{{ form.amount.label }}</label>
+      <input
+        required
+        step="0.01"
+        type="number"
+        id="{{ form.amount.id_for_label }}"
+        name="{{ form.amount.name }}"
+        class="ba b--black-20 pa1 b2 db w-100">
     </div>
-    <select name="owner">
+    <select name="owner" class="pv2">
       {% for roommate in roommates %}
         <option value="{{ roommate.id }}">{{ roommate.name }}</option>
       {% endfor %}
     </select>
-    <input type="submit" value="Create">
+    <input
+      type="submit"
+      value="Create"
+      class="dim f6 ba bw1 ph3 pv2 mb2 mt2 db black bg-white b--black"
+    >
   </form>
 </div>
 {% endblock %}

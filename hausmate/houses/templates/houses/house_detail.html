@@ -7,20 +7,20 @@
     <a class="f6" href="{% url 'house_delete' object.id %}">Delete</a>
   </div>
   <div class="pb4">
+    <div class="b f3 pb2">Bills</div>
+    <a class="f6" href="{% url 'bill_create' object.id %}">Add Bill</a>
+    <div class="pv2">
+      {% for bill in object.bill_set.all %}
+      <div class="ba pa2 mv2 mw6"><a href="{% url 'bill_detail' object.id bill.id %}">{{ bill.name}}</a></div>
+      {% endfor %}
+    </div>
+  </div>
+  <div>
     <div class="b f3 pb2">Roommates</div>
     <a class="f6" href="{% url 'roommate_create' object.id %}">Add Roommate</a>
     <div class="pv2">
       {% for roommate in object.roommate_set.all %}
       <div class="ba pa2 mv2 mw6">{{ roommate.name }}</div>
-      {% endfor %}
-    </div>
-  </div>
-  <div>
-    <div class="b f3 pb2">Bills</div>
-    <a class="f6" href="{% url 'bill_create' object.id %}">Add Bill</a>
-    <div class="pv2">
-      {% for bill in object.bill_set.all %}
-      <div class="ba p2 mv2 mw6"><a href="{% url 'bill_detail' object.id bill.id %}">{{ bill.name}}</a></div>
       {% endfor %}
     </div>
   </div>
