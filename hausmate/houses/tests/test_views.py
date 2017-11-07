@@ -59,7 +59,7 @@ class UserCreatesHouse(TestCase):
         house = House.objects.first()
         roommates = house.roommate_set
         self.assertEqual(roommates.count(), 1)
-        self.assertIn(self.user.first_name, roommates.values_list('name', flat=True))
+        self.assertIn(self.user.username, roommates.values_list('name', flat=True))
 
 
 class HouseDataMixin:

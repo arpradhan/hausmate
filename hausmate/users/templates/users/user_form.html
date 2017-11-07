@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="w-100 pa2">
+  <h2>Create Account</h2>
+</div>
+<div class="w-25 pa2">
+  <form action="{% url 'user_create' %}" method="post">
+    {% csrf_token %}
+    <div class="form-field">
+      {% for error in form.username.errors  %}
+        <small class="f6 red db mb2">{{ error }}</small>
+      {% endfor %}
+      <label
+        for="{{ form.username.id_for_label }}"
+        class="f6 b db mb2">
+        {{ form.username.label }}
+      </label>
+      <input
+        class="input-reset ba b--black-20 pa1 mb2 db w-100"
+        maxlength="150"
+        autofocus
+        required
+        type="text"
+        id="{{ form.username.id_for_label }}"
+        name="{{ form.username.name }}" />
+      <small class="f6 black-60 db mb2">{{ form.username.help_text|safe }}</small>
+    </div>
+    <div class="form-field">
+      {% for error in form.password1.errors %}
+        <small class="f6 red db mb2">{{ error }}</small>
+      {% endfor %}
+      <label
+        for="{{form.password1.id_for_label }}"
+        class="f6 b db mb2">
+          {{ form.password1.label }}
+        </label>
+        <input
+          type="password"
+          class="input-reset ba b--black-20 pa1 b2 db w-100"
+          required
+          id="{{ form.password1.id_for_label }}"
+          name="{{ form.password1.name }}"
+          required
+        />
+        <small class="f6 black-60 db mb2">{{ form.password1.help_text|safe }}</small>
+    </div>
+    <div class="form-field">
+      {% for error in form.password2.errors %}
+        <small class="f6 red db mb2">{{ error }}</small>
+      {% endfor %}
+      <label
+        for="{{ form.password2.id_for_label }}"
+        class="f6 b db mb2">
+        {{ form.password2.label }}
+      </label>
+      <input
+        type="password"
+        class="input-reset ba b--black-20 pa1 b2 db w-100"
+        required
+        id="{{ form.password2.id_for_label }}"
+        name="{{ form.password2.name }}"
+      />
+      <small class="f6 black-60 db mb2">{{ form.password2.help_text|safe }}</small>
+    </div>
+    <input
+      type="submit"
+      value="Submit"
+      class="pointer:hover dim f6 ba bw1 ph3 pv2 mb2 mt2 dib black bg-white b--black"
+     />
+  </form>
+</div>
+{% endblock %}

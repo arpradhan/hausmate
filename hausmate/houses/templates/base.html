@@ -12,6 +12,7 @@
         <a class="ph1" href="{% url 'logout' %}">Logout</a>
       {% else %}
         <a class="ph1" href="{% url 'login' %}">Login</a>
+        <a class="ph1" href="{% url 'user_create' %}">Register</a>
       {% endif %}
     </nav>
     {% block content %}{% endblock %}

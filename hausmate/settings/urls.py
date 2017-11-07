@@ -17,10 +17,12 @@ from django.conf.urls import url, include
 from django.contrib import admin
 
 from houses.views import HomePageView
+from users.views import UserCreateView
 
 urlpatterns = [
     url('^$', HomePageView.as_view(), name='home'),
     url(r'^houses/', include('houses.urls')),
+    url(r'^register', UserCreateView.as_view(), name='user_create'),
     url(r'^', include('django.contrib.auth.urls')),
     url(r'^admin/', admin.site.urls),
 ]

@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'houses.apps.HousesConfig',
+    'users.apps.UsersConfig',
     'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -120,3 +121,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Authentication
+AUTH_USER_MODEL = 'users.User'

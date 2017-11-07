@@ -41,7 +41,7 @@ class HouseCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         self.object = form.save()
         Roommate.objects.create(
-            name=self.request.user.first_name,
+            name=self.request.user.username,
             house=self.object
         )
         return super().form_valid(form)
