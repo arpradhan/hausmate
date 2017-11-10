@@ -3,10 +3,11 @@ services:
   web:
     build:
       ./hausmate
-    command: python manage.py runserver 0.0.0.0:8080
+    # command: python manage.py runserver 0.0.0.0:8080
     env_file: .env
     ports:
       - "8080:8080"
+      - "8000:8000"
     restart: always
     volumes:
       - ./hausmate:/usr/src/app
