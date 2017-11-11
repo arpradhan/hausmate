@@ -72,7 +72,12 @@ spec:
           value: https://storage.googleapis.com/hausmate/
         - name: STATICFILES_STORAGE
           value: storages.backends.gcloud.GoogleCloudStorage
-        image: gcr.io/hausmate-185516/hausmate:v4
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: /var/secrets/google/key.json
+        volumeMounts:
+        - name: google-cloud-key
+          mountPath: /var/secrets/google
+        image: gcr.io/hausmate-185516/hausmate:v5
         imagePullPolicy: Always
         name: hausmate
         ports:
@@ -96,3 +101,6 @@ spec:
       - hostPath:
           path: /etc/ssl/certs
         name: ssl-certs
+      - name: google-cloud-key
+        secret:
+          secretName: hausmate-key
