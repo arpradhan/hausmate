@@ -1,0 +1,105 @@
+defaults: &defaults
+  working_directory: ~/hausmate
+
+version: 2
+jobs:
+  build:
+    <<: *defaults
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - checkout
+      - setup_remote_docker
+
+      - run:
+          name: Build image
+          command: |
+            docker build -t hausmate hausmate/
+
+      - run:
+          name: Save image
+          command: |
+            mkdir -p workspace
+            docker save hausmate -o workspace/hausmate-image
+
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - hausmate-image
+
+  test:
+    <<: *defaults
+    docker:
+      - image: circleci/python:3.6
+    steps:
+      - checkout
+      - setup_remote_docker
+      - attach_workspace:
+          at: workspace
+
+      - run:
+          name: Load image
+          command: |
+            docker load -i workspace/hausmate-image
+
+      - run:
+          name: Run tests
+          command: |
+            openssl aes-256-cbc -d -in secret-env-cipher -out secret-env-plain -k $CIPHER_KEY
+            docker run --env-file=secret-env-plain hausmate ./manage.py test
+
+  deploy:
+    <<: *defaults
+    docker:
+      - image: google/cloud-sdk
+    steps:
+      - checkout
+      - setup_remote_docker
+      - attach_workspace:
+          at: workspace
+
+      - run:
+          name: Load image
+          command: |
+            docker load -i workspace/hausmate-image
+
+      - run:
+          name: Install deploy dependencies
+          command: |
+            pip install jinja2-cli
+
+      - run:
+          name: Set up gcloud credentials
+          command: |
+            echo $GCLOUD_SERVICE_KEY | base64 --decode --ignore-garbage > ${HOME}/gcloud-service-key.json
+            export GOOGLE_APPLICATION_CREDENTIALS=${HOME}/gcloud-service-key.json
+            gcloud auth activate-service-account --key-file $GOOGLE_APPLICATION_CREDENTIALS --project=$GOOGLE_PROJECT_ID
+            gcloud container clusters get-credentials $GOOGLE_CLUSTER_NAME --zone $GOOGLE_COMPUTE_ZONE
+
+      - run:
+          name: Deploy image to GCR
+          command: |
+            docker tag hausmate gcr.io/$GOOGLE_PROJECT_ID/hausmate:$CIRCLE_SHA1
+            gcloud docker  -- push gcr.io/$GOOGLE_PROJECT_ID/hausmate:$CIRCLE_SHA1
+
+      - run:
+          name: Deploy app to GCE
+          command: |
+            jinja2 -D "tag=$CIRCLE_SHA1" deployment.template.yml > deployment.yml
+            kubectl apply -f deployment.yml
+
+workflows:
+  version: 2
+  build_test_deploy:
+    jobs:
+      - build
+      - test:
+          requires:
+            - build
+      - deploy:
+          requires:
+            - test
+          filters:
+            branches:
+              only:
+                - master

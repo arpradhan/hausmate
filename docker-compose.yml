@@ -3,8 +3,8 @@ services:
   web:
     build:
       ./hausmate
-    # command: python manage.py runserver 0.0.0.0:8080
-    env_file: .env
+    command: python manage.py runserver 0.0.0.0:8080
+    env_file: .env-dev
     ports:
       - "8080:8080"
       - "8000:8000"
