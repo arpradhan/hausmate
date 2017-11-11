@@ -77,7 +77,7 @@ spec:
         volumeMounts:
         - name: google-cloud-key
           mountPath: /var/secrets/google
-        image: gcr.io/hausmate-185516/hausmate:v5
+        image: gcr.io/hausmate-185516/hausmate:{{ tag }}
         imagePullPolicy: Always
         name: hausmate
         ports:
