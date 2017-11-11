@@ -14,6 +14,7 @@ import ast
 import os
 from .auth import *
 from .staticfiles import *
+from .db import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -30,6 +31,7 @@ DEBUG = ast.literal_eval(os.environ.get('DJANGO_DEBUG', 'False'))
 
 ALLOWED_HOSTS = [
     'localhost',
+    '*',
 ]
 
 
@@ -76,17 +78,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'settings.wsgi.application'
-
-
-# Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 
 
 # Password validation

@@ -5,3 +5,4 @@ factory_boy==2.9.2
 google-cloud==0.30.0
 gunicorn==19.7.1
 ipython==6.2.1
+psycopg2==2.7.3.2
