@@ -3,11 +3,11 @@
 {% block content %}
 <div class="pv2 ph5">
   <div class="b f2 pt4 pb2">Houses</div>
-  <a href="{% url 'house_create' %}" class="db mb4 f6">Create House</a>
+  <a href="{% url 'house_create' %}" class="blue db mb4 f6">Create House</a>
   <ul class="list pl0">
     {% for obj in object_list %}
     <li>
-      <a href="{% url 'house_detail' obj.id %}" class="f4">{{ obj.name }}</a>
+      <a href="{% url 'house_detail' obj.id %}" class="blue f4">{{ obj.name }}</a>
     </li>
     {% endfor %}
   </ul>

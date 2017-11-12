@@ -11,6 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import House, Roommate, Bill, Payment, PaymentEvent
 from .mixins import CreatorCheckMixin, HouseChildrenMixin
+from .forms import PaymentEventForm
 
 
 class HomePageView(TemplateView):
@@ -130,7 +131,7 @@ class BillDetailView(HouseChildrenMixin, DetailView):
 
 class PaymentEventCreateView(CreateView):
     model = PaymentEvent
-    fields = ['amount', 'payment']
+    form_class = PaymentEventForm
 
     def post(self, request, *args, **kwargs):
         post = request.POST.copy()
@@ -152,6 +153,7 @@ class PaymentEventCreateView(CreateView):
         bill = payment.bill
         house = bill.house
         context_data['payment_id'] = payment.id
+        context_data['amount_due'] = payment.amount_due
         context_data['bill_id'] = bill.id
         context_data['house_id'] = house.id
         return context_data

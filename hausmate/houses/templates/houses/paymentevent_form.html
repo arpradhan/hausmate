@@ -5,6 +5,7 @@
   {% if error_message %}
   <p class="red">{{ error_message }</p>
   {% endif %}
+  <p>&dollar;{{ amount_due }} Due</p>
   <form action="{% url 'payment_event_create' payment_id %}" method="post" class="mw6">
     {% csrf_token %}
     <div class="form-field mb2">
@@ -19,7 +20,8 @@
         autofocus
         id="{{ form.amount.id_for_label }}"
         name="{{ form.amount.name }}"
-        class="ba b--black-20 pa1 b2 db w-100">
+        class="ba b--black-20 pa1 b2 db w-100"
+        value="{{ form.amount.value }}">
     </div>
     <input
       type="submit"
@@ -27,6 +29,8 @@
       class="dim f6 ba bw1 ph3 pv2 mb2 mt2 db black bg-white b--black"
     >
   </form>
-  <a href="{% url 'bill_detail' bill_id house_id %}" class="mv4 db">Back to Bill</a>
+  <div class="mv4">
+    <a href="{% url 'bill_detail' house_id bill_id %}" class="blue">Back to Bill</a>
+  </div>
 </div>
 {% endblock %}
