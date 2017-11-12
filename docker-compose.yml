@@ -9,10 +9,3 @@ services:
     restart: always
     volumes:
       - ./hausmate:/usr/src/app
-  nginx:
-    build: ./nginx
-    environment:
-      - WEB_HOST=web:8000
-    command: bash /etc/nginx/entrypoint.sh
-    ports:
-      - "80:80"

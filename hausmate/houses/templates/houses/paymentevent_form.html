@@ -5,6 +5,7 @@
   {% if error_message %}
   <p class="red">{{ error_message }</p>
   {% endif %}
+  <p>&dollar;{{ amount_due }} Due</p>
   <form action="{% url 'payment_event_create' payment_id %}" method="post" class="mw6">
     {% csrf_token %}
     <div class="form-field mb2">
@@ -19,7 +20,8 @@
         autofocus
         id="{{ form.amount.id_for_label }}"
         name="{{ form.amount.name }}"
-        class="ba b--black-20 pa1 b2 db w-100">
+        class="ba b--black-20 pa1 b2 db w-100"
+        value="{{ form.amount.value }}">
     </div>
     <input
       type="submit"

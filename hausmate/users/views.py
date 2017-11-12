@@ -1,4 +1,4 @@
-from django.contrib.auth import forms, authenticate, login
+from django.contrib.auth import forms, login
 from django.contrib.auth import get_user_model
 from django.views.generic import CreateView
 from django.urls import reverse_lazy

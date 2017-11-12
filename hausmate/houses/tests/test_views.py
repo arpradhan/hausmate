@@ -356,6 +356,24 @@ class UserCreatesPaymentEvent(BillDataMixin, TestCase):
         self.assertEqual(payment.amount_paid, 8.00)
 
 
+class UserPaysMoreThanPaymentAmount(BillDataMixin, TestCase):
+    def setUp(self):
+        self.client.force_login(self.user)
+        data = {'amount': 1000.00}
+        self.response = self.client.post(
+            reverse('payment_event_create', args=(self.payment.id,)),
+            data=data,
+        )
+
+    def test_payment_event_is_not_created(self):
+        self.assertEqual(PaymentEvent.objects.count(), 0)
+
+    def test_error_in_context_data(self):
+        context_data = self.response.context_data
+        errors = context_data['form'].errors['amount']
+        self.assertEqual(len(errors), 1)
+
+
 class RoommateDetailViewTests(BillDataMixin, TestCase):
     @classmethod
     def setUpTestData(cls):
