@@ -3,16 +3,16 @@
 <div class="pv2 ph5">
   <div class="pb4">
     <div class="b f2 pt4 pb2">{{ object.name }}</div>
-    <a class="f6" href="{% url 'house_update' object.id %}">Update</a>
-    <a class="f6" href="{% url 'house_delete' object.id %}">Delete</a>
+    <a class="f6 blue" href="{% url 'house_update' object.id %}">Update</a>
+    <a class="f6 blue" href="{% url 'house_delete' object.id %}">Delete</a>
   </div>
   <div class="pb4">
     <div class="b f3 pb2">Bills</div>
-    <a class="f6" href="{% url 'bill_create' object.id %}">Add Bill</a>
+    <a class="f6 blue" href="{% url 'bill_create' object.id %}">Add Bill</a>
     <div class="pv2">
       {% for bill in object.bill_set.all %}
         <div class="ba b--black-50 pa4 mv2 mw6">
-          <a href="{% url 'bill_detail' object.id bill.id %}">{{ bill.name}}</a>
+          <a class="blue" href="{% url 'bill_detail' object.id bill.id %}">{{ bill.name}}</a>
           <div class="pv2 flex justify-between">
             <div class="black-50 mr2 f6">&dollar;{{ bill.amount_due }} Due</div>
             <div class="black-50 mr2 f6">&dollar;{{ bill.amount_paid }} Paid</div>
@@ -24,17 +24,19 @@
   </div>
   <div>
     <div class="b f3 pb2">Roommates</div>
-    <a class="f6" href="{% url 'roommate_create' object.id %}">Add Roommate</a>
+    <a class="f6 blue" href="{% url 'roommate_create' object.id %}">Add Roommate</a>
     <ul class="list pl0 mw4">
       {% for roommate in object.roommate_set.all %}
-        <li>
-          <a href="{% url 'roommate_detail' object.id roommate.id %}" class="mv2 db">
+        <li class="mv2">
+          <a href="{% url 'roommate_detail' object.id roommate.id %}" class="blue">
             {{ roommate.name }}
           </a>
         </li>
       {% endfor %}
     </ul>
   </div>
-  <a href="{% url 'house_list' %}" class="db mv4">Back to Houses</a>
+  <div class="mv4">
+    <a href="{% url 'house_list' %}" class="blue">Back to Houses</a>
+  </div>
 </div>
 {% endblock %}

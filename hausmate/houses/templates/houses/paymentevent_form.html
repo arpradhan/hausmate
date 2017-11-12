@@ -27,6 +27,8 @@
       class="dim f6 ba bw1 ph3 pv2 mb2 mt2 db black bg-white b--black"
     >
   </form>
-  <a href="{% url 'bill_detail' bill_id house_id %}" class="mv4 db">Back to Bill</a>
+  <div class="mv4">
+    <a href="{% url 'bill_detail' bill_id house_id %}" class="blue">Back to Bill</a>
+  </div>
 </div>
 {% endblock %}

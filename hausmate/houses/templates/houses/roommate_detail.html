@@ -33,6 +33,8 @@
   {% else %}
     <span class="i black-50">None</span>
   {% endif %}
-  <a href="{% url 'house_detail' object.house.id %}" class="db mv4">Back to House</a>
+  <div class="mv4">
+    <a href="{% url 'house_detail' object.house.id %}" class="blue">Back to House</a>
+  </div>
 </div>
 {% endblock %}

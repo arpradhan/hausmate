@@ -27,12 +27,12 @@
           {{payment.amount_paid}}
         </td>
         <td class="pv2 ph3">
-          <a class="f6" href="{% url 'payment_event_create' payment.id %}">Make Payment</a>
+          <a class="f6 blue" href="{% url 'payment_event_create' payment.id %}">Make Payment</a>
         </td>
       </tr>
       {% endfor %}
     </tbody>
   </table>
-  <a href="{% url 'house_detail' object.house.id %}" class="db pv4">Back to House</a>
+  <a href="{% url 'house_detail' object.house.id %}" class="blue db pv4">Back to House</a>
 </div>
 {% endblock %}
