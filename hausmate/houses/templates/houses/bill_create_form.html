@@ -2,6 +2,7 @@
 {% block content %}
 <div class="pv2 ph5">
   <div class="b f2 pt4 pb2">Create Bill</div>
+  <p>Payments will be split evenly among roommates.</p>
   <form action="{% url 'bill_create' house_id %}" class="mw5" method="post">
     {% csrf_token %}
     <div class="form-field mb2">
