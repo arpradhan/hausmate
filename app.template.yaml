@@ -1,0 +1,33 @@
+runtime: python
+env: flex
+entrypoint: gunicorn -b :$PORT settings.wsgi
+
+runtime_config:
+  python_version: 3
+
+skip_files:
+  - ^(.*/)?\.bak$
+  - ^(.*/)?\.pyc$
+  - ^__pycache__$
+  - ^(.*/)?\.sqlite3$
+
+beta_settings:
+  cloud_sql_instances: '{{ DB_CONNECTION_NAME }}'
+
+env_variables:
+  DB_ENGINE: 'django.db.backends.postgresql_psycopg2'
+  DB_HOST: '/cloudsql/{{ DB_CONNECTION_NAME }}'
+  DB_NAME: '{{ DB_NAME }}'
+  DB_PASSWORD: '{{ DB_PASSWORD }}'
+  DB_PORT: '5432'
+  DB_USER: '{{ DB_USER }}'
+  DJANGO_DEBUG: 'False'
+  DJANGO_SETTINGS_MODULE: 'settings.base'
+  GS_BUCKET_NAME: 'hausmate'
+  GS_PROJECT_NAME: '{{ GOOGLE_PROJECT_ID }}'
+  STATIC_URL: 'https://storage.googleapis.com/hausmate/'
+  STATICFILES_STORAGE: 'storages.backends.gcloud.GoogleCloudStorage'
+
+automatic_scaling:
+  min_num_instances: 1
+  max_num_instances: 2
